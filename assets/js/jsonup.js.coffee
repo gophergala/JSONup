@@ -77,8 +77,15 @@ UpBox = React.createClass
         option {value: '5'}, "5 Minute"
         option {value: '60'}, "1 Hour"
 
+sockUrl = "ws://127.0.0.1:11112/foobar"
+
+handleMessage = (msg) ->
+  console.log JSON.parse(msg.data)
+
 document.addEventListener "DOMContentLoaded", (event) ->
+  window.sock = new SocketHandler(sockUrl, handleMessage)
   render()
+
 
 render = ->
   target = document.body
