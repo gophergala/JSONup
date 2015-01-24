@@ -1,3 +1,39 @@
 html {
   font-size: 120%;
 }
+
+/* header */
+
+div#header {
+  text-align: center;
+}
+
+/* post box */
+
+div#postbox {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+div#postbox textarea {
+  display: block;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* upbox rows */
+
+div#upbox-rows {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+div.upbox-row {
+  border: 1px solid #333;
+  margin: 10px auto 10px auto;
+  background-color: #eee;
+}
