@@ -21,13 +21,12 @@ type jsonUpRecord struct {
 	UserID string `json:"UserId"`
 }
 
-var listenAddr = flag.String("listenAddr", ":8080", "Web server listen address")
+var listenAddr = flag.String("listenAddr", ":11111", "Web server listen address")
 
 func pushEndpoint(w http.ResponseWriter, req *http.Request) {
 	var jsonCollection []JSONUp
 
 	decoder := json.NewDecoder(req.Body)
-
 	err := decoder.Decode(&jsonCollection)
 
 	if err != nil {
@@ -37,6 +36,8 @@ func pushEndpoint(w http.ResponseWriter, req *http.Request) {
 	}
 
 	log.Println(jsonCollection)
+
+	w.WriteHeader(200)
 }
 
 func main() {
@@ -50,6 +51,10 @@ func main() {
 	// Static public files
 	publicFiles := http.FileServer(http.Dir("public"))
 	router.Handle("/", publicFiles)
+
+	// This is really dumb. #TODO, use strip prefix or something.
+	router.Handle("/js/app.js", publicFiles)
+	router.Handle("/css/app.css", publicFiles)
 
 	// Start Web Server
 	http.Handle("/", router)
