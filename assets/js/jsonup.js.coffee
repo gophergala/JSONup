@@ -11,7 +11,7 @@ DOM = (->
   object
 )()
 
-{div, p, a, img, textarea, table, tbody, thead, th, tr, td, form, h1, input, span} = DOM
+{div, ul, li, p, a, img, textarea, table, tbody, thead, th, tr, td, form, h1, input, span} = DOM
 # End Boilerplate
 
 
@@ -20,6 +20,7 @@ JSONUp = React.createClass
     div {id: 'wrap'},
       div {id: 'header'}, 'JSON ➔ Up?'
       div {id: 'postbox'}, PostBox()
+      div {id: 'demobox'}, DemoBox()
 
 PostBox = React.createClass
   exampleJSON: '[
@@ -37,6 +38,17 @@ PostBox = React.createClass
       textarea {id: 'textarea', value: @exampleJSON, rows: 3, cols: 80}
       div {},
         input {type: 'submit'}
+
+DemoBox = React.createClass
+  render: ->
+    ul {},
+      li {},
+        div {}, 'Go'
+      li {},
+        div {}, 'Ruby'
+      li {},
+        div {}, 'Javascript'
+
 
 document.addEventListener "DOMContentLoaded", (event) ->
   render()
