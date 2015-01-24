@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"log"
 	"net/http"
@@ -8,12 +9,35 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// JSONUp represents one row of posted or collected json.
+type JSONUp struct {
+	Name   string `json:"name"`
+	Status string `json:"status"`
+	Value  uint   `json:"value"`
+}
+
+type jsonUpRecord struct {
+	JSONUp
+	UserID string `json:"UserId"`
+}
+
 var listenAddr = flag.String("listenAddr", ":8080", "Web server listen address")
 
-//
-// func pushEndpoint(http.ResponseWriter, *http.Request) {
-//
-// }
+func pushEndpoint(w http.ResponseWriter, req *http.Request) {
+	var jsonCollection []JSONUp
+
+	decoder := json.NewDecoder(req.Body)
+
+	err := decoder.Decode(&jsonCollection)
+
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+
+	log.Println(jsonCollection)
+}
 
 func main() {
 	flag.Parse()
@@ -21,7 +45,7 @@ func main() {
 	router := mux.NewRouter()
 
 	// Push endpoint
-	// router.HandleFunc("/push/{userId}", pushEndpoint).Methods("POST")
+	router.HandleFunc("/push/{userId}", pushEndpoint).Methods("POST")
 
 	// Static public files
 	publicFiles := http.FileServer(http.Dir("public"))
