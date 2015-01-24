@@ -1,7 +1,15 @@
 package main
 
-import "net/http"
+import (
+	"flag"
+	"log"
+	"net/http"
+)
+
+var listenAddr = flag.String("listenAddr", ":8080", "Web server listen address")
 
 func main() {
-	http.ListenAndServe(":8080", http.FileServer(http.Dir("./public")))
+	flag.Parse()
+	log.Println("Web server Listening on " + *listenAddr)
+	http.ListenAndServe(*listenAddr, http.FileServer(http.Dir("./public")))
 }
