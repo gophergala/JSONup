@@ -44,7 +44,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
 }).call(this);
 (function() {
-  var DOM, DemoBox, JSONUp, PostBox, UpBox, UpBoxes, a, build_tag, div, form, h1, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, table, tbody, td, textarea, th, thead, tr, ul,
+  var DOM, DemoBox, JSONUp, JSONUpCollection, PostBox, UpBox, UpBoxes, a, build_tag, collection, div, form, h1, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, table, tbody, td, textarea, th, thead, tr, ul,
     __slice = [].slice;
 
   build_tag = function(tag) {
@@ -83,7 +83,9 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         id: 'demobox'
       }, DemoBox()), div({
         id: 'upboxes'
-      }, UpBoxes()));
+      }, UpBoxes({
+        ups: this.props.ups
+      })));
     }
   });
 
@@ -115,26 +117,25 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
   UpBoxes = React.createClass({
     render: function() {
+      var up;
       return div({
         id: 'upbox-rows'
-      }, UpBox({
-        name: 'Server1',
-        status: 'UP',
-        sparkline: [1, 2, 4, 1, 5, 1, 5, 1, 5, 1, 5, 1]
-      }), UpBox({
-        name: 'Server2',
-        status: 'UP',
-        sparkline: [1, 2, 4, 1, 5, 1, 5, 1, 5, 1, 5, 1]
-      }), UpBox({
-        name: 'Server3',
-        status: 'DOWN',
-        sparkline: [1, 2, 4, 1, 5, 1, 5, 1, 5, 1, 5, 1]
-      }));
+      }, (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.props.ups;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          up = _ref[_i];
+          _results.push(UpBox(up));
+        }
+        return _results;
+      }).call(this));
     }
   });
 
   UpBox = React.createClass({
     render: function() {
+      console.log(this.props);
       return div({
         className: 'upbox-row'
       }, span({
@@ -157,10 +158,46 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
     }
   });
 
+  JSONUpCollection = (function() {
+    function JSONUpCollection() {
+      this.data = [];
+    }
+
+    JSONUpCollection.prototype.getData = function() {
+      return this.data;
+    };
+
+    JSONUpCollection.prototype.add = function(d) {
+      var found, key, val, _i, _len, _ref;
+      d.key = d.name;
+      found = false;
+      _ref = this.data;
+      for (key = _i = 0, _len = _ref.length; _i < _len; key = ++_i) {
+        val = _ref[key];
+        if (val.name === d.name) {
+          found = true;
+          this.data[key] = d;
+        }
+      }
+      if (!found) {
+        return this.data.unshift(d);
+      }
+    };
+
+    return JSONUpCollection;
+
+  })();
+
+  collection = new JSONUpCollection;
+
   sockUrl = "ws://127.0.0.1:11112/foobar";
 
   handleMessage = function(msg) {
-    return console.log(JSON.parse(msg.data));
+    var d;
+    d = JSON.parse(msg.data);
+    console.log(d);
+    collection.add(d);
+    return render();
   };
 
   document.addEventListener("DOMContentLoaded", function(event) {
@@ -171,7 +208,9 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
   render = function() {
     var target;
     target = document.body;
-    return React.render(JSONUp(), target, null);
+    return React.render(JSONUp({
+      ups: collection.getData()
+    }), target, null);
   };
 
 }).call(this);

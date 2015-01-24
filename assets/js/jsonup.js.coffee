@@ -21,7 +21,7 @@ JSONUp = React.createClass
         h1 {}, 'JSON ➔ Up?'
       div {id: 'postbox'}, PostBox() # Box that demos a POST request
       div {id: 'demobox'}, DemoBox() # Box that shows how to post in ruby, curl etc
-      div {id: 'upboxes'}, UpBoxes() # the status and sparklines
+      div {id: 'upboxes'}, UpBoxes(ups: @props.ups) # the status and sparklines
 
 # This will be the box that demos the post functionality
 PostBox = React.createClass
@@ -58,9 +58,9 @@ DemoBox = React.createClass
 UpBoxes = React.createClass
   render: ->
     div {id: 'upbox-rows'},
-      UpBox({name: 'Server1', status: 'UP',   sparkline: [1,2,4,1,5,1,5,1,5,1,5,1]})
-      UpBox({name: 'Server2', status: 'UP',   sparkline: [1,2,4,1,5,1,5,1,5,1,5,1]})
-      UpBox({name: 'Server3', status: 'DOWN', sparkline: [1,2,4,1,5,1,5,1,5,1,5,1]})
+      for up in @props.ups
+        UpBox(up)
+
 
 UpBox = React.createClass
   render: ->
@@ -77,16 +77,38 @@ UpBox = React.createClass
         option {value: '5'}, "5 Minute"
         option {value: '60'}, "1 Hour"
 
+class JSONUpCollection
+  constructor: () ->
+    @data = []
+
+  getData: () ->
+    @data
+
+  add: (d) ->
+    d.key = d.name
+    found = false
+    for val, key in @data
+      if val.name == d.name
+        found = true
+        @data[key] = d
+
+    @data.unshift(d) if not found
+
+
+collection = new JSONUpCollection
+
 sockUrl = "ws://127.0.0.1:11112/foobar"
 
 handleMessage = (msg) ->
-  console.log JSON.parse(msg.data)
+  d = JSON.parse(msg.data)
+  console.log d
+  collection.add(d)
+  render()
 
 document.addEventListener "DOMContentLoaded", (event) ->
   window.sock = new SocketHandler(sockUrl, handleMessage)
   render()
 
-
 render = ->
   target = document.body
-  React.render JSONUp(), target, null
+  React.render JSONUp(ups: collection.getData()), target, null
