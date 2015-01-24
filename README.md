@@ -12,7 +12,7 @@ View all status on a mobile friendly site
 with sparklines of the posted values.
 
 
-## Example javascript
+## Example JSON
 
 ```javascript
 [
