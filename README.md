@@ -45,11 +45,14 @@ To run:
 
 # TODO
 
- * Go best practices ( I'm a newbie )
- * split up app.
  * still have to connect to twillio to verify SMS
  * still have to monitor for "Down" and send sms.
+ * Go best practices ( I'm pretty new to Go)
+ * React.js best practices ( ditto )
+ * launch demo
+ * enter competition
  * ratelimit SMS
+ * split up app more
  * "signup" process ( though this can be automatic really)
  * Usage examples
  * fix max 100 value issue

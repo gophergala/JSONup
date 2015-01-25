@@ -44,7 +44,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
 }).call(this);
 (function() {
-  var DOM, DemoBox, JSONUp, JSONUpCollection, PostBox, Sparkline, UpBox, UpBoxes, a, build_tag, collection, div, embed, form, h1, h2, h3, h4, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, svg, table, tbody, td, textarea, th, thead, tr, ul,
+  var DOM, DemoBox, JSONUp, JSONUpCollection, PhoneForm, PostBox, Sparkline, UpBox, UpBoxes, a, build_tag, collection, div, embed, form, h1, h2, h3, h4, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, svg, table, tbody, td, textarea, th, thead, tr, ul,
     __slice = [].slice;
 
   build_tag = function(tag) {
@@ -83,7 +83,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         id: 'upboxes'
       }, UpBoxes({
         ups: this.props.ups
-      })));
+      })), PhoneForm());
     }
   });
 
@@ -92,7 +92,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
       return {
         demoName: 'server1.redis',
         demoStatus: 'UP',
-        demoValue: "25"
+        demoValue: "" + Math.floor((Math.random() * 99) + 1)
       };
     },
     onSubmit: function(e) {
@@ -129,18 +129,18 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         onSubmit: this.onSubmit
       }, div({
         className: 'demoform'
-      }, span({}, '[{ "name": "'), input({
+      }, span({}, '[{"name":"'), input({
         value: this.state.demoName,
         onChange: this.setName
-      }, span({}, '", "status": "')), input({
+      }, span({}, '", "status":"')), input({
         value: this.state.demoStatus,
         className: 'sm',
         onChange: this.setStatus
-      }, span({}, '", "value": ')), input({
+      }, span({}, '", "value":"')), input({
         value: this.state.demoValue,
         className: 'sm',
         onChange: this.setValue
-      }, span({}, '}]'))), div({
+      }, span({}, '"}]'))), div({
         className: 'submit-div'
       }, input({
         type: 'submit',
@@ -224,12 +224,22 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
   });
 
   UpBox = React.createClass({
+    classes: function() {
+      var c;
+      c = "upbox-row";
+      if (this.props.status === 'UP') {
+        c += " status-up";
+      } else {
+        c += " status-down";
+      }
+      return c;
+    },
     render: function() {
       return div({
-        className: 'upbox-row'
+        className: this.classes()
+      }, div({
+        className: 'upbox-right'
       }, span({
-        className: 'upbox-name'
-      }, this.props.name), span({
         className: 'upbox-status'
       }, this.props.status), Sparkline({
         sparkline: this.props.sparkline
@@ -237,13 +247,15 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         type: 'checkbox'
       }), "Monitor"), select({
         name: 'upbox'
-      }, option({}, "Dead Man Switch", option({
+      }, option({}, "KeepAlive Alert", option({
         value: '1'
       }, "1 Minute")), option({
         value: '5'
       }, "5 Minute"), option({
         value: '60'
-      }, "1 Hour")));
+      }, "1 Hour"))), div({
+        className: 'upbox-name'
+      }, this.props.name));
     }
   });
 
@@ -251,9 +263,23 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
     render: function() {
       if (this.props.sparkline && this.props.sparkline.length > 0) {
         return img({
-          src: "http://chart.apis.google.com/chart?cht=lc" + ("&chs=100x30&chd=t:" + this.props.sparkline + "&chco=666666") + "&chls=1,1,0" + "&chxt=r,x,y" + "&chxs=0,990000,11,0,_|1,990000,1,0,_|2,990000,1,0,_" + "&chxl=0:||1:||2:||"
+          src: "http://chart.apis.google.com/chart?cht=lc" + ("&chs=100x30&chd=t:" + (this.props.sparkline.reverse()) + "&chco=666666") + "&chls=1,1,0" + "&chxt=r,x,y" + "&chxs=0,990000,11,0,_|1,990000,1,0,_|2,990000,1,0,_" + "&chxl=0:||1:||2:||"
         });
       }
+    }
+  });
+
+  PhoneForm = React.createClass({
+    render: function() {
+      return div({
+        id: 'alert-form'
+      }, div({}, "Alert via SMS to"), form({}, label({}, "Country Code", input({
+        initialValue: "+",
+        size: 5
+      })), label({}, "Phone Number", input({
+        initialValue: "",
+        size: 15
+      }))));
     }
   });
 

@@ -21,6 +21,7 @@ JSONUp = React.createClass
         h1 {}, 'JSON ➔ Up?'
       div {id: 'demobox'}, DemoBox() # Box that shows how to post in ruby, curl etc
       div {id: 'upboxes'}, UpBoxes(ups: @props.ups) # the status and sparklines
+      PhoneForm()
 
 # This will be the box that demos the post functionality
 PostBox = React.createClass
@@ -28,7 +29,7 @@ PostBox = React.createClass
     {
       demoName: 'server1.redis',
       demoStatus: 'UP',
-      demoValue: "25"
+      demoValue: ""+Math.floor((Math.random() * 99) + 1)
     }
 
   onSubmit: (e) ->
@@ -50,13 +51,13 @@ PostBox = React.createClass
   render: ->
     form {id: 'postform', onSubmit: @onSubmit},
       div {className: 'demoform'},
-        span {}, '[{ "name": "'
+        span {}, '[{"name":"'
         input {value: @state.demoName, onChange: @setName},
-        span {}, '", "status": "'
+        span {}, '", "status":"'
         input {value: @state.demoStatus, className: 'sm', onChange: @setStatus},
-        span {}, '", "value": '
+        span {}, '", "value":"'
         input {value: @state.demoValue, className: 'sm', onChange: @setValue},
-        span {}, '}]'
+        span {}, '"}]'
 
       div {className: 'submit-div'},
         input {type: 'submit', className: 'submitbutton', value: 'POST to jsonup.com/push/$userid'}
@@ -101,30 +102,52 @@ UpBoxes = React.createClass
         UpBox(up)
 
 UpBox = React.createClass
+  classes: ->
+    c = "upbox-row"
+    if @props.status == 'UP'
+      c += " status-up"
+    else
+      c += " status-down"
+    c
+
   render: ->
-    div {className: 'upbox-row'},
-      span {className: 'upbox-name'}, @props.name
-      span {className: 'upbox-status'}, @props.status
-      Sparkline({sparkline: @props.sparkline})
-      label {},
-        input {type: 'checkbox'}
-        "Monitor"
-      select {name: 'upbox'},
-        option {}, "Dead Man Switch",
-        option {value: '1'}, "1 Minute"
-        option {value: '5'}, "5 Minute"
-        option {value: '60'}, "1 Hour"
+    div {className: @classes()},
+      div {className: 'upbox-right'},
+        span {className: 'upbox-status'}, @props.status
+        Sparkline({sparkline: @props.sparkline})
+        label {},
+          input {type: 'checkbox'}
+          "Monitor"
+        select {name: 'upbox'},
+          option {}, "KeepAlive Alert",
+          option {value: '1'}, "1 Minute"
+          option {value: '5'}, "5 Minute"
+          option {value: '60'}, "1 Hour"
+      div {className: 'upbox-name'}, @props.name
+
 
 Sparkline = React.createClass
   render: ->
     #console.log @props
     if @props.sparkline && @props.sparkline.length > 0
       img {src: "http://chart.apis.google.com/chart?cht=lc" +
-        "&chs=100x30&chd=t:#{@props.sparkline}&chco=666666" +
+        "&chs=100x30&chd=t:#{@props.sparkline.reverse()}&chco=666666" +
         "&chls=1,1,0" +
         "&chxt=r,x,y" +
         "&chxs=0,990000,11,0,_|1,990000,1,0,_|2,990000,1,0,_" +
         "&chxl=0:||1:||2:||" }
+
+PhoneForm = React.createClass
+  render: ->
+    div {id: 'alert-form'},
+      div {}, "Alert via SMS to"
+      form {},
+        label {},
+          "Country Code"
+          input {initialValue: "+", size: 5}
+        label {},
+          "Phone Number"
+          input {initialValue: "", size: 15}
 
 class JSONUpCollection
   constructor: () ->
