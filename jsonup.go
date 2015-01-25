@@ -16,6 +16,7 @@ import (
 	"code.google.com/p/go.net/websocket"
 	"github.com/garyburd/redigo/redis"
 	"github.com/gorilla/mux"
+	"github.com/sfreiberg/gotwilio"
 )
 
 var (
@@ -23,6 +24,9 @@ var (
 	wsListenAddr  = flag.String("wsListenAddr", ":11112", "Websocket server listen address")
 	redisProtocol = flag.String("redisProtocol", "tcp", "Redis server protocol")
 	redisAddress  = flag.String("redisAddress", "localhost:6379", "Redis server address")
+
+	accountSid = flag.String("accountSID", "", "Twillio Account ID")
+	authToken  = flag.String("authToken", "", "Twillio Auth Token")
 
 	pool *redis.Pool
 
@@ -159,6 +163,11 @@ func (u *UpUser) SendVerifyCode(ph_area string, ph_num string) string {
 	log.Printf(rnum)
 	conn := pool.Get()
 	defer conn.Close()
+
+	message := "Your verification code for JSONUp is " + rnum
+	twilio := gotwilio.NewTwilioClient(*accountSid, *authToken)
+	twilio.SendSMS("+61421812892", "+"+ph_area+ph_num, message, "", "")
+
 	return rnum
 }
 
@@ -290,7 +299,7 @@ func publishUsersUpRecords(userID string) {
 		}
 
 		//log.Printf("%s", scanResults)
-
+		// borrowed from https://github.com/garyburd/redigo/issues/81
 		keys, ok := scanResults[1].([]interface{})
 		if !ok {
 			log.Fatalln("Cannot cast scan results")

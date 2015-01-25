@@ -44,7 +44,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
 }).call(this);
 (function() {
-  var DOM, DemoBox, EnterPhoneForm, JSONUp, JSONUpCollection, PhoneForm, PostBox, Sparkline, UpBox, UpBoxes, UserID, VerifyPhoneForm, a, br, build_tag, collection, div, embed, form, h1, h2, h3, h4, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, svg, table, tbody, td, textarea, th, thead, tr, ul,
+  var DOM, DemoBox, EnterPhoneForm, JSONUp, JSONUpCollection, PhoneForm, PostBox, Sparkline, UpBox, UpBoxes, UserID, VerifyPhoneForm, a, br, build_tag, collection, div, embed, form, h1, h2, h3, h4, handleMessage, img, input, label, li, option, p, pre, render, select, sockUrl, span, svg, table, tbody, td, textarea, th, thead, tr, ul,
     __slice = [].slice;
 
   build_tag = function(tag) {
@@ -69,7 +69,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
     return object;
   })();
 
-  div = DOM.div, embed = DOM.embed, ul = DOM.ul, svg = DOM.svg, li = DOM.li, label = DOM.label, select = DOM.select, option = DOM.option, br = DOM.br, p = DOM.p, a = DOM.a, img = DOM.img, textarea = DOM.textarea, table = DOM.table, tbody = DOM.tbody, thead = DOM.thead, th = DOM.th, tr = DOM.tr, td = DOM.td, form = DOM.form, h1 = DOM.h1, h2 = DOM.h2, h3 = DOM.h3, h4 = DOM.h4, input = DOM.input, span = DOM.span;
+  div = DOM.div, embed = DOM.embed, ul = DOM.ul, svg = DOM.svg, li = DOM.li, label = DOM.label, select = DOM.select, option = DOM.option, br = DOM.br, p = DOM.p, a = DOM.a, img = DOM.img, textarea = DOM.textarea, table = DOM.table, tbody = DOM.tbody, thead = DOM.thead, th = DOM.th, tr = DOM.tr, td = DOM.td, form = DOM.form, h1 = DOM.h1, h2 = DOM.h2, h3 = DOM.h3, h4 = DOM.h4, input = DOM.input, span = DOM.span, pre = DOM.pre;
 
   JSONUp = React.createClass({
     render: function() {
@@ -97,10 +97,10 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
     },
     getDemoValue: function() {
       var states;
-      states = ['UP', 'UP', 'UP', 'UP', 'UP', 'UP', 'DOWN', 'GONE'];
+      states = ['UP', 'UP', 'UP', 'UP', 'UP', 'UP', 'DOWN'];
       return {
-        demoName: "server" + (Math.floor((Math.random() * 3) + 1)) + ".redis",
-        demoStatus: states[Math.floor(Math.random() * 8)],
+        demoName: "server" + (Math.floor((Math.random() * 2) + 1)) + ".redis",
+        demoStatus: states[Math.floor(Math.random() * 7)],
         demoValue: "" + (Math.floor((Math.random() * 99) + 1))
       };
     },
@@ -137,7 +137,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
       return form({
         id: 'postform',
         onSubmit: this.onSubmit
-      }, div({
+      }, div({}, div({}, "curl --data '[{\"name\":\"server1.ram\",\"value\":\"50\",\"status\":\"UP\"}]'  " + (" https://www.jsonup.com/push/" + UserID))), div({
         className: 'demoform'
       }, span({}, '[{'), br({}), span({}, '"name":"'), input({
         value: this.state.demoName,
@@ -156,7 +156,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         type: 'submit',
         className: 'submitbutton',
         value: "Show Me"
-      }), div({}, "Your user id is " + UserID), div({}, "POST a JSON array as above to"), div({}, "https://api.jsonup.com/push/" + UserID)));
+      })));
     }
   });
 
@@ -233,23 +233,34 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
   });
 
   EnterPhoneForm = React.createClass({
+    getInitialState: function() {
+      return {
+        showForm: true
+      };
+    },
     handleSubmit: function(e) {
-      console.log(e);
-      return e.preventDefault();
+      e.preventDefault();
+      return this.setState({
+        showForm: false
+      });
     },
     render: function() {
-      return form({
-        onSubmit: this.handleSubmit
-      }, label({}, "Country Code", input({
-        initialValue: "+",
-        size: 5
-      })), label({}, "Phone Number", input({
-        initialValue: "3af",
-        size: 15
-      })), div({}, input({
-        type: "submit",
-        value: "Verify"
-      })));
+      if (this.state.showForm) {
+        return form({
+          onSubmit: this.handleSubmit
+        }, label({}, "Country Code", input({
+          initialValue: "+",
+          size: 5
+        })), label({}, "Phone Number", input({
+          initialValue: "3af",
+          size: 15
+        })), div({}, input({
+          type: "submit",
+          value: "Verify"
+        })));
+      } else {
+        return div({}, "#TODO");
+      }
     }
   });
 

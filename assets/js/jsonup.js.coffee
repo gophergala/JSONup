@@ -11,7 +11,7 @@ DOM = (->
   object
 )()
 
-{div, embed, ul, svg, li, label, select, option, br, p, a, img, textarea, table, tbody, thead, th, tr, td, form, h1, h2, h3, h4, input, span} = DOM
+{div, embed, ul, svg, li, label, select, option, br, p, a, img, textarea, table, tbody, thead, th, tr, td, form, h1, h2, h3, h4, input, span, pre} = DOM
 # End Boilerplate
 
 JSONUp = React.createClass
@@ -33,11 +33,10 @@ PostBox = React.createClass
     }
 
   getDemoValue: ->
-    states = ['UP','UP','UP','UP','UP','UP','DOWN','GONE']
-
+    states = ['UP','UP','UP','UP','UP','UP','DOWN']
     {
-      demoName: "server#{Math.floor((Math.random() * 3) + 1)}.redis",
-      demoStatus: states[Math.floor((Math.random() * 8))],
+      demoName: "server#{Math.floor((Math.random() * 2) + 1)}.redis",
+      demoStatus: states[Math.floor((Math.random() * 7))],
       demoValue: "#{Math.floor((Math.random() * 99) + 1)}"
     }
 
@@ -60,6 +59,9 @@ PostBox = React.createClass
 
   render: ->
     form {id: 'postform', onSubmit: @onSubmit},
+      div {},
+        div {}, "curl --data '[{\"name\":\"server1.ram\",\"value\":\"50\",\"status\":\"UP\"}]'  " +
+              " https://www.jsonup.com/push/#{UserID}"
       div {className: 'demoform'},
         span {}, '[{'
         br {}
@@ -79,9 +81,6 @@ PostBox = React.createClass
 
       div {className: 'submit-div'},
         input {type: 'submit', className: 'submitbutton', value: "Show Me"}
-        div {}, "Your user id is #{UserID}"
-        div {}, "POST a JSON array as above to"
-        div {}, "https://api.jsonup.com/push/#{UserID}"
 
 DemoBox = React.createClass
   render: ->
@@ -146,19 +145,26 @@ PhoneForm = React.createClass
           EnterPhoneForm()
 
 EnterPhoneForm = React.createClass
+  getInitialState: ->
+    {showForm: true}
+
   handleSubmit: (e) ->
-    console.log(e)
     e.preventDefault()
+    @setState({showForm: false})
+
   render: ->
-    form {onSubmit: @handleSubmit},
-      label {},
-        "Country Code"
-        input {initialValue: "+", size: 5}
-      label {},
-        "Phone Number"
-        input {initialValue: "3af", size: 15}
-      div {},
-        input {type: "submit", value: "Verify"}
+    if @state.showForm
+      form {onSubmit: @handleSubmit},
+        label {},
+          "Country Code"
+          input {initialValue: "+", size: 5}
+        label {},
+          "Phone Number"
+          input {initialValue: "3af", size: 15}
+        div {},
+          input {type: "submit", value: "Verify"}
+    else
+      div {}, "#TODO"
 
 VerifyPhoneForm = React.createClass
   handleSubmit: (e) ->
