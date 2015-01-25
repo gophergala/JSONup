@@ -93,18 +93,14 @@ func wsServer(ws *websocket.Conn) {
 	log.Println("for address:", ws.Request().URL.Path)
 	log.Println("Websocket connections", len(wsClients))
 
-	// TODO, add a closer channel so can unsubscribe
-	// from redis when websocket dies
 	c := redisSubscribeJSON(ws.Request().URL.Path[1:])
 
 	for {
 		requestJSON := <-c
-		for cs := range wsClients {
-			err := websocket.Message.Send(cs.websocket, requestJSON)
-			if err != nil {
-				log.Println("Could not send to client, removing")
-				delete(wsClients, sockID)
-			}
+		err := websocket.Message.Send(ws, requestJSON)
+		if err != nil {
+			log.Println("Could not send to client, removing")
+			delete(wsClients, sockID)
 		}
 	}
 }
@@ -290,7 +286,7 @@ func publishUsersUpRecords(userID string) {
 			log.Fatalln("Cannot cast scan results")
 		}
 
-		log.Printf("%s", scanResults)
+		//log.Printf("%s", scanResults)
 
 		keys, ok := scanResults[1].([]interface{})
 		if !ok {
@@ -306,8 +302,8 @@ func publishUsersUpRecords(userID string) {
 		}
 
 		if b, ok := scanResults[0].([]byte); !ok || string(b) == "0" {
-			log.Printf("ok: %s", ok)
-			log.Println("Done fetching keys")
+			//log.Printf("ok: %s", ok)
+			//log.Println("Done fetching keys")
 			break
 		} else {
 			iter = string(b)
@@ -317,7 +313,7 @@ func publishUsersUpRecords(userID string) {
 }
 
 func sendUpRecord(userID string, name string) {
-	log.Printf("name: %s", name)
+	//log.Printf("name: %s", name)
 	conn := pool.Get()
 	defer conn.Close()
 
@@ -336,7 +332,7 @@ func sendUpRecord(userID string, name string) {
 		return
 	}
 
-	log.Printf("sparkline: %s", sparkline)
+	//log.Printf("sparkline: %s", sparkline)
 	up.ValueHistory = sparkline
 
 	// Publish Web Event.

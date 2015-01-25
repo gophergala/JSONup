@@ -89,7 +89,11 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
   PostBox = React.createClass({
     getInitialState: function() {
-      return this.getDemoValue();
+      return {
+        demoName: "server1.redis",
+        demoStatus: "UP",
+        demoValue: "40"
+      };
     },
     getDemoValue: function() {
       var states;

@@ -26,7 +26,11 @@ JSONUp = React.createClass
 # This will be the box that demos the post functionality
 PostBox = React.createClass
   getInitialState: ->
-    @getDemoValue()
+    {
+      demoName: "server1.redis",
+      demoStatus: "UP",
+      demoValue: "40"
+    }
 
   getDemoValue: ->
     states = ['UP','UP','UP','UP','UP','UP','DOWN','GONE']
