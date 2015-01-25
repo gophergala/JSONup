@@ -1,5 +1,7 @@
 # JSON UP
 
+( Gopher Gala hackathon entry WIP)
+
 ## What is it?
 
 Post JSON to JSON UP.
@@ -67,3 +69,9 @@ first 3 people to have one merged will be members!
 
 
  I'll be online sporadically but regularly until the end of the comp!
+
+# Communication
+
+see the `#jsonup` channel on the gophergala slack server.
+
+I hope to launch a working version on jsonup.com by the close of competition.
