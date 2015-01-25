@@ -44,7 +44,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
 }).call(this);
 (function() {
-  var DOM, DemoBox, EnterPhoneForm, JSONUp, JSONUpCollection, PhoneForm, PostBox, Sparkline, UpBox, UpBoxes, VerifyPhoneForm, a, build_tag, collection, div, embed, form, h1, h2, h3, h4, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, svg, table, tbody, td, textarea, th, thead, tr, ul,
+  var DOM, DemoBox, EnterPhoneForm, JSONUp, JSONUpCollection, PhoneForm, PostBox, Sparkline, UpBox, UpBoxes, UserID, VerifyPhoneForm, a, build_tag, collection, div, embed, form, h1, h2, h3, h4, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, svg, table, tbody, td, textarea, th, thead, tr, ul,
     __slice = [].slice;
 
   build_tag = function(tag) {
@@ -99,7 +99,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
       var http;
       e.preventDefault();
       http = new XMLHttpRequest();
-      http.open("POST", "/push/foobar", true);
+      http.open("POST", "/push/" + UserID, true);
       return http.send(JSON.stringify([
         {
           name: this.state.demoName,
@@ -142,10 +142,10 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         onChange: this.setValue
       }, span({}, '"}]'))), div({
         className: 'submit-div'
-      }, input({
+      }, div({}, "Your user id is " + UserID), input({
         type: 'submit',
         className: 'submitbutton',
-        value: 'POST to jsonup.com/push/$userid'
+        value: "POST to https://api.jsonup.com/push/" + UserID
       })));
     }
   });
@@ -340,9 +340,18 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
   })();
 
+  if (window.location.hash && window.location.hash.length > 6) {
+    UserID = window.location.hash.substring(1);
+  } else {
+    UserID = Math.random().toString(36).substring(7);
+    if (history.pushState) {
+      history.pushState(null, null, "#" + UserID);
+    }
+  }
+
   collection = new JSONUpCollection;
 
-  sockUrl = "ws://127.0.0.1:11112/foobar";
+  sockUrl = "ws://127.0.0.1:11112/" + UserID;
 
   handleMessage = function(msg) {
     var d;

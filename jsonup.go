@@ -46,6 +46,7 @@ type jsonUpRecord struct {
 	ValueHistory []string `json:"sparkline"`
 }
 
+// UpUser is a record of a user of JSONUp
 type UpUser struct {
 	ID            string
 	PhoneAreaCode string
@@ -61,7 +62,7 @@ func (r jsonUpRecord) ID() string {
 func redisSubscribeJSON(userID string) chan string {
 	c := make(chan string)
 	pubSubConn := redis.PubSubConn{Conn: pool.Get()}
-	pubSubConn.Subscribe(userID)
+	pubSubConn.Subscribe("user:" + userID)
 
 	go func() {
 		for {
@@ -75,6 +76,8 @@ func redisSubscribeJSON(userID string) chan string {
 			}
 		}
 	}()
+
+	//go publishUsersUpRecords(userID)
 
 	return c
 }
@@ -92,7 +95,7 @@ func wsServer(ws *websocket.Conn) {
 
 	// TODO, add a closer channel so can unsubscribe
 	// from redis when websocket dies
-	c := redisSubscribeJSON(ws.Request().URL.Path)
+	c := redisSubscribeJSON(ws.Request().URL.Path[1:])
 
 	for {
 		requestJSON := <-c
@@ -173,7 +176,7 @@ func saveUserEndpoint(w http.ResponseWriter, req *http.Request) {
 	}
 
 	idx := strings.LastIndex(req.URL.Path, "/")
-	userID := req.URL.Path[idx:]
+	userID := req.URL.Path[idx+1:]
 
 	if userID == user.ID {
 		// save user
@@ -196,7 +199,7 @@ func pushEndpoint(w http.ResponseWriter, req *http.Request) {
 	}
 
 	idx := strings.LastIndex(req.URL.Path, "/")
-	userID := req.URL.Path[idx:]
+	userID := req.URL.Path[idx+1:]
 
 	user, err := loadUser(userID)
 	if err != nil {
@@ -218,30 +221,38 @@ func pushToRedis(up *jsonUpRecord) (err error) {
 	conn := pool.Get()
 	defer conn.Close()
 
-	key := up.ID() + ":" + ju.Name
+	key := "user:" + up.ID()
 
-	_, err = conn.Do("SETEX", key+"status", 60, ju.Status)
+	_, err = conn.Do("SETEX", key+":status", 60, ju.Status)
 	if err != nil {
 		log.Printf("Redis Push Error %s", err)
 		return
 	}
 
-	_, err = conn.Do("LPUSH", key+"values", ju.Value)
+	_, err = conn.Do("LPUSH", key+":values", ju.Value)
 	if err != nil {
 		log.Printf("Redis Push Error %s", err)
 		return
 	}
 
-	_, err = conn.Do("LTRIM", key+"values", 0, 20)
+	// limit array to 20 entries
+	_, err = conn.Do("LTRIM", key+":values", 0, 20)
 	if err != nil {
 		log.Printf("Redis Push Error %s", err)
+		return
+	}
+
+	// add to users set of ups.
+	_, err = conn.Do("SADD", "user:"+up.User.ID+":ups", ju.Name)
+	if err != nil {
+		log.Printf("Redis SADD Error %s", err)
 		return
 	}
 
 	// Get sparkline data
-	values, err := redis.Strings(conn.Do("LRANGE", key+"values", 0, 20))
+	values, err := redis.Strings(conn.Do("LRANGE", key+":values", 0, 20))
 	if err != nil {
-		panic(err)
+		return
 	}
 
 	log.Printf("%s", values)
@@ -249,7 +260,7 @@ func pushToRedis(up *jsonUpRecord) (err error) {
 
 	// Publish Web Event.
 	data, _ := json.Marshal(up)
-	_, err = conn.Do("PUBLISH", up.User.ID, data)
+	_, err = conn.Do("PUBLISH", "user:"+up.User.ID, data)
 	if err != nil {
 		log.Printf("Redis Push Error %s", err)
 		return
@@ -257,6 +268,88 @@ func pushToRedis(up *jsonUpRecord) (err error) {
 
 	return
 }
+
+// func publishUsersUpRecords(userID string) {
+// 	conn := pool.Get()
+// 	defer conn.Close()
+//
+// 	user, err := loadUser(userID)
+// 	if err != nil {
+// 		return
+// 	}
+//
+// 	// Get users uprecords by name
+// 	var upRecords []string
+// 	upRecords = make([]string, 20)
+//
+// 	iter := "0"
+// 	i := 0
+// 	for {
+// 		result, err := conn.Do("SSCAN", "user:"+userID+":ups", iter, "COUNT", 20)
+// 		if err != nil {
+// 			log.Fatalln(err)
+// 		}
+//
+// 		scanResults, ok := result.([]interface{})
+// 		if !ok {
+// 			log.Fatalln("Cannot cast scan results")
+// 		}
+//
+// 		log.Printf("%s", scanResults)
+//
+// 		keys, ok := scanResults[1].([]interface{})
+// 		if !ok {
+// 			log.Fatalln("Cannot cast scan results")
+// 		}
+//
+// 		for _, key := range keys {
+// 			b, ok := key.([]byte)
+// 			if !ok {
+// 				log.Fatalln("Cannot cast key")
+// 			}
+// 			upRecords[i] = string(b)
+// 		}
+//
+// 		if b, ok := scanResults[0].([]byte); !ok || string(b) == "0" {
+// 			log.Printf("ok: %s", ok)
+// 			log.Println("Done fetching keys")
+// 			break
+// 		} else {
+// 			iter = string(b)
+// 		}
+//
+// 	}
+// 	log.Printf("useR: %s", user)
+//
+// 	for _, name := range upRecords {
+// 		// Load status
+// 		log.Printf("name: %s", name)
+//
+// 		status, err := redis.String(conn.Do("GET", "user:"+userID+":"+name+":status"))
+//
+// 		log.Printf("status: %s", status)
+//
+// 		jsonUp := JSONUp{Name: name}
+// 		up := jsonUpRecord{User: *user, JSONUp: jsonUp}
+//
+// 		// Get sparkline data
+// 		sparkline, err := redis.Strings(conn.Do("LRANGE", "user:"+userID+":"+name+":values", 0, 20))
+// 		if err != nil {
+// 			return
+// 		}
+//
+// 		log.Printf("sparkline: %s", sparkline)
+// 		up.ValueHistory = sparkline
+//
+// 		// Publish Web Event.
+// 		data, _ := json.Marshal(up)
+// 		_, err = conn.Do("PUBLISH", "user:"+up.User.ID, data)
+// 		if err != nil {
+// 			log.Printf("Redis Push Error %s", err)
+// 			return
+// 		}
+// 	}
+// }
 
 func main() {
 	flag.Parse()

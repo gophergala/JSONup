@@ -35,7 +35,7 @@ PostBox = React.createClass
   onSubmit: (e) ->
     e.preventDefault()
     http = new XMLHttpRequest()
-    http.open("POST", "/push/foobar", true);
+    http.open("POST", "/push/#{UserID}", true);
     http.send(JSON.stringify([{
       name: @state.demoName,
       status: @state.demoStatus,
@@ -60,7 +60,8 @@ PostBox = React.createClass
         span {}, '"}]'
 
       div {className: 'submit-div'},
-        input {type: 'submit', className: 'submitbutton', value: 'POST to jsonup.com/push/$userid'}
+        div {}, "Your user id is #{UserID}"
+        input {type: 'submit', className: 'submitbutton', value: "POST to https://api.jsonup.com/push/#{UserID}"}
 
 DemoBox = React.createClass
 
@@ -196,9 +197,15 @@ class JSONUpCollection
     @data.unshift(d) if not found
 
 
+if window.location.hash && window.location.hash.length > 6
+  UserID = window.location.hash.substring(1)
+else
+  UserID = Math.random().toString(36).substring(7)
+  history.pushState(null, null, "##{UserID}") if history.pushState
+
 collection = new JSONUpCollection
 
-sockUrl = "ws://127.0.0.1:11112/foobar"
+sockUrl = "ws://127.0.0.1:11112/#{UserID}"
 
 handleMessage = (msg) ->
   d = JSON.parse(msg.data)
