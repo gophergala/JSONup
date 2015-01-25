@@ -1,3 +1,6 @@
+// this was written in a few hours as fast as possible
+// for the gopher gala.
+// That should explain why it's really bad :)
 package main
 
 import (
