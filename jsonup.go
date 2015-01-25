@@ -40,9 +40,9 @@ type JSONUp struct {
 
 // jsonUpRecord is internal
 type jsonUpRecord struct {
-	UserID string `json:"UserId"`
+	UserID string `json:"-"` // omit
 	JSONUp
-	ValueHistory []uint `json:"sparkline"`
+	ValueHistory []string `json:"sparkline"`
 }
 
 func redisSubscribeJSON(userID string) chan string {
@@ -126,14 +126,49 @@ func pushEndpoint(w http.ResponseWriter, req *http.Request) {
 	w.WriteHeader(200)
 }
 
-func pushToRedis(up *jsonUpRecord) {
+func pushToRedis(up *jsonUpRecord) (err error) {
+	ju := up.JSONUp
+
 	conn := pool.Get()
 	defer conn.Close()
-	data, _ := json.Marshal(up)
-	_, err := conn.Do("PUBLISH", up.UserID, data)
+
+	key := up.UserID + ":" + ju.Name
+
+	_, err = conn.Do("SETEX", key+"status", 60, ju.Status)
 	if err != nil {
 		log.Printf("Redis Push Error %s", err)
+		return
 	}
+
+	_, err = conn.Do("LPUSH", key+"values", ju.Value)
+	if err != nil {
+		log.Printf("Redis Push Error %s", err)
+		return
+	}
+
+	_, err = conn.Do("LTRIM", key+"values", 0, 20)
+	if err != nil {
+		log.Printf("Redis Push Error %s", err)
+		return
+	}
+
+	// Get sparkline data
+	values, err := redis.Strings(conn.Do("LRANGE", key+"values", 0, 20))
+	if err != nil {
+		panic(err)
+	}
+
+	log.Printf("%s", values)
+	up.ValueHistory = values
+	// Publish Web Event.
+	data, _ := json.Marshal(up)
+	_, err = conn.Do("PUBLISH", up.UserID, data)
+	if err != nil {
+		log.Printf("Redis Push Error %s", err)
+		return
+	}
+
+	return
 }
 
 func main() {

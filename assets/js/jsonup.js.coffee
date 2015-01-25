@@ -61,7 +61,6 @@ UpBoxes = React.createClass
       for up in @props.ups
         UpBox(up)
 
-
 UpBox = React.createClass
   render: ->
     div {className: 'upbox-row'},
@@ -76,6 +75,7 @@ UpBox = React.createClass
         option {value: '1'}, "1 Minute"
         option {value: '5'}, "5 Minute"
         option {value: '60'}, "1 Hour"
+
 
 class JSONUpCollection
   constructor: () ->
