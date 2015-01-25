@@ -137,7 +137,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
       return form({
         id: 'postform',
         onSubmit: this.onSubmit
-      }, div({}, div({}, "curl --data '[{\"name\":\"server1.ram\",\"value\":\"50\",\"status\":\"UP\"}]'  " + (" https://www.jsonup.com/push/" + UserID))), div({
+      }, div({}, div({}, "curl --data '[{\"name\":\"server1.ram\",\"value\":\"50\",\"status\":\"UP\"}]'  " + (" http://jsonup.com/push/" + UserID))), div({
         className: 'demoform'
       }, span({}, '[{'), br({}), span({}, '"name":"'), input({
         value: this.state.demoName,
