@@ -203,7 +203,7 @@ else
 
 collection = new JSONUpCollection
 
-sockUrl = "ws://jsonup.com/#{UserID}"
+sockUrl = "ws://jsonup.com:11112/#{UserID}"
 
 handleMessage = (msg) ->
   d = JSON.parse(msg.data)
