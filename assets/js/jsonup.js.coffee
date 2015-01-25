@@ -26,10 +26,15 @@ JSONUp = React.createClass
 # This will be the box that demos the post functionality
 PostBox = React.createClass
   getInitialState: ->
+    @getDemoValue()
+
+  getDemoValue: ->
+    states = ['UP','UP','UP','UP','UP','UP','DOWN','GONE']
+
     {
-      demoName: 'server1.redis',
-      demoStatus: 'UP',
-      demoValue: ""+Math.floor((Math.random() * 99) + 1)
+      demoName: "server#{Math.floor((Math.random() * 3) + 1)}.redis",
+      demoStatus: states[Math.floor((Math.random() * 8))],
+      demoValue: "#{Math.floor((Math.random() * 99) + 1)}"
     }
 
   onSubmit: (e) ->
@@ -41,6 +46,7 @@ PostBox = React.createClass
       status: @state.demoStatus,
       value: @state.demoValue
     }]))
+    @setState(@getDemoValue())
 
   setName: (e) -> @setState({demoName: e.target.value})
 
@@ -68,8 +74,10 @@ PostBox = React.createClass
         span {}, '}]'
 
       div {className: 'submit-div'},
+        input {type: 'submit', className: 'submitbutton', value: "Show Me"}
         div {}, "Your user id is #{UserID}"
-        input {type: 'submit', className: 'submitbutton', value: "POST to https://api.jsonup.com/push/#{UserID}"}
+        div {}, "POST a JSON array as above to"
+        div {}, "https://api.jsonup.com/push/#{UserID}"
 
 DemoBox = React.createClass
   render: ->

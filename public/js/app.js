@@ -89,10 +89,15 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
   PostBox = React.createClass({
     getInitialState: function() {
+      return this.getDemoValue();
+    },
+    getDemoValue: function() {
+      var states;
+      states = ['UP', 'UP', 'UP', 'UP', 'UP', 'UP', 'DOWN', 'GONE'];
       return {
-        demoName: 'server1.redis',
-        demoStatus: 'UP',
-        demoValue: "" + Math.floor((Math.random() * 99) + 1)
+        demoName: "server" + (Math.floor((Math.random() * 3) + 1)) + ".redis",
+        demoStatus: states[Math.floor(Math.random() * 8)],
+        demoValue: "" + (Math.floor((Math.random() * 99) + 1))
       };
     },
     onSubmit: function(e) {
@@ -100,13 +105,14 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
       e.preventDefault();
       http = new XMLHttpRequest();
       http.open("POST", "/push/" + UserID, true);
-      return http.send(JSON.stringify([
+      http.send(JSON.stringify([
         {
           name: this.state.demoName,
           status: this.state.demoStatus,
           value: this.state.demoValue
         }
       ]));
+      return this.setState(this.getDemoValue());
     },
     setName: function(e) {
       return this.setState({
@@ -142,11 +148,11 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         onChange: this.setValue
       }), span({}, '"'), br({}), span({}, '}]')), div({
         className: 'submit-div'
-      }, div({}, "Your user id is " + UserID), input({
+      }, input({
         type: 'submit',
         className: 'submitbutton',
-        value: "POST to https://api.jsonup.com/push/" + UserID
-      })));
+        value: "Show Me"
+      }), div({}, "Your user id is " + UserID), div({}, "POST a JSON array as above to"), div({}, "https://api.jsonup.com/push/" + UserID)));
     }
   });
 
