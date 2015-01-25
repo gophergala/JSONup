@@ -44,7 +44,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
 }).call(this);
 (function() {
-  var DOM, DemoBox, JSONUp, JSONUpCollection, PhoneForm, PostBox, Sparkline, UpBox, UpBoxes, a, build_tag, collection, div, embed, form, h1, h2, h3, h4, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, svg, table, tbody, td, textarea, th, thead, tr, ul,
+  var DOM, DemoBox, EnterPhoneForm, JSONUp, JSONUpCollection, PhoneForm, PostBox, Sparkline, UpBox, UpBoxes, VerifyPhoneForm, a, build_tag, collection, div, embed, form, h1, h2, h3, h4, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, svg, table, tbody, td, textarea, th, thead, tr, ul,
     __slice = [].slice;
 
   build_tag = function(tag) {
@@ -83,7 +83,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         id: 'upboxes'
       }, UpBoxes({
         ups: this.props.ups
-      })), PhoneForm());
+      })), this.props.ups && this.props.ups.length > 0 ? PhoneForm() : void 0);
     }
   });
 
@@ -272,14 +272,41 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
   PhoneForm = React.createClass({
     render: function() {
       return div({
-        id: 'alert-form'
-      }, div({}, "Alert via SMS to"), form({}, label({}, "Country Code", input({
+        id: 'phone-form'
+      }, h3({}, "Alert via SMS to"), this.props.haveNumber ? VerifyPhoneForm() : this.props.verified ? div({}, this.props.alertNumber) : EnterPhoneForm());
+    }
+  });
+
+  EnterPhoneForm = React.createClass({
+    handleSubmit: function(e) {
+      console.log(e);
+      return e.preventDefault();
+    },
+    render: function() {
+      return form({
+        onSubmit: this.handleSubmit
+      }, label({}, "Country Code", input({
         initialValue: "+",
         size: 5
       })), label({}, "Phone Number", input({
-        initialValue: "",
+        initialValue: "3af",
         size: 15
-      }))));
+      })), div({}, input({
+        type: "submit",
+        value: "Verify"
+      })));
+    }
+  });
+
+  VerifyPhoneForm = React.createClass({
+    handleSubmit: function(e) {
+      console.log(e);
+      return e.preventDefault();
+    },
+    render: function() {
+      return form({
+        onSubmit: this.handleSubmit
+      }, label({}, "Verification Code", input({})));
     }
   });
 

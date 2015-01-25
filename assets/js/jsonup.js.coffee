@@ -21,7 +21,7 @@ JSONUp = React.createClass
         h1 {}, 'JSON ➔ Up?'
       div {id: 'demobox'}, DemoBox() # Box that shows how to post in ruby, curl etc
       div {id: 'upboxes'}, UpBoxes(ups: @props.ups) # the status and sparklines
-      PhoneForm()
+      PhoneForm() if @props.ups && @props.ups.length > 0
 
 # This will be the box that demos the post functionality
 PostBox = React.createClass
@@ -137,17 +137,46 @@ Sparkline = React.createClass
         "&chxs=0,990000,11,0,_|1,990000,1,0,_|2,990000,1,0,_" +
         "&chxl=0:||1:||2:||" }
 
+
+
 PhoneForm = React.createClass
   render: ->
-    div {id: 'alert-form'},
-      div {}, "Alert via SMS to"
-      form {},
-        label {},
-          "Country Code"
-          input {initialValue: "+", size: 5}
-        label {},
-          "Phone Number"
-          input {initialValue: "", size: 15}
+    div {id: 'phone-form'},
+      h3 {}, "Alert via SMS to"
+      if @props.haveNumber
+        VerifyPhoneForm()
+      else
+        if @props.verified
+          div {},
+            @props.alertNumber
+        else
+          EnterPhoneForm()
+
+EnterPhoneForm = React.createClass
+  handleSubmit: (e) ->
+    console.log(e)
+    e.preventDefault()
+  render: ->
+    form {onSubmit: @handleSubmit},
+      label {},
+        "Country Code"
+        input {initialValue: "+", size: 5}
+      label {},
+        "Phone Number"
+        input {initialValue: "3af", size: 15}
+      div {},
+        input {type: "submit", value: "Verify"}
+
+VerifyPhoneForm = React.createClass
+  handleSubmit: (e) ->
+    console.log(e)
+    e.preventDefault()
+
+  render: ->
+    form {onSubmit: @handleSubmit},
+      label {},
+        "Verification Code"
+        input {}
 
 class JSONUpCollection
   constructor: () ->

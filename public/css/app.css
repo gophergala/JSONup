@@ -85,7 +85,6 @@ div.demoform input:focus {
 }
 
 .submitbutton {
-  font-family: "courier new";
   font-size: 16px;
   text-align: center;
   -webkit-appearance: none;
@@ -147,4 +146,15 @@ div.upbox-row .upbox-status {
 .submit-div {
   padding: 10px;
   text-align: center;
+}
+
+/* Phone Form */
+
+div#phone-form {
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  border-top: 1px solid #ccc;
+  margin-top: 30px;
 }
