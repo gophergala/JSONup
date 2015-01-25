@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -150,14 +151,14 @@ func (u *UpUser) SaveUser() {
 	}
 }
 
-// func (u *UpUser) SendVerifyCode(ph_area, ph_num, string) string {
-// 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-// 	rnum := string(r.Int31())[:5]
-//
-// 	conn := pool.Get()
-// 	defer conn.Close()
-// 	return rnum
-// }
+func (u *UpUser) SendVerifyCode(ph_area string, ph_num string) string {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	rnum := string(r.Int31())[:5]
+	log.Printf(rnum)
+	conn := pool.Get()
+	defer conn.Close()
+	return rnum
+}
 
 func saveUserEndpoint(w http.ResponseWriter, req *http.Request) {
 	var user UpUser

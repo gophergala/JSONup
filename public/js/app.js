@@ -44,7 +44,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
 }).call(this);
 (function() {
-  var DOM, DemoBox, JSONUp, JSONUpCollection, PostBox, UpBox, UpBoxes, a, build_tag, collection, div, form, h1, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, table, tbody, td, textarea, th, thead, tr, ul,
+  var DOM, DemoBox, JSONUp, JSONUpCollection, PostBox, Sparkline, UpBox, UpBoxes, a, build_tag, collection, div, embed, form, h1, h2, h3, h4, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, svg, table, tbody, td, textarea, th, thead, tr, ul,
     __slice = [].slice;
 
   build_tag = function(tag) {
@@ -69,7 +69,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
     return object;
   })();
 
-  div = DOM.div, ul = DOM.ul, li = DOM.li, label = DOM.label, select = DOM.select, option = DOM.option, p = DOM.p, a = DOM.a, img = DOM.img, textarea = DOM.textarea, table = DOM.table, tbody = DOM.tbody, thead = DOM.thead, th = DOM.th, tr = DOM.tr, td = DOM.td, form = DOM.form, h1 = DOM.h1, input = DOM.input, span = DOM.span;
+  div = DOM.div, embed = DOM.embed, ul = DOM.ul, svg = DOM.svg, li = DOM.li, label = DOM.label, select = DOM.select, option = DOM.option, p = DOM.p, a = DOM.a, img = DOM.img, textarea = DOM.textarea, table = DOM.table, tbody = DOM.tbody, thead = DOM.thead, th = DOM.th, tr = DOM.tr, td = DOM.td, form = DOM.form, h1 = DOM.h1, h2 = DOM.h2, h3 = DOM.h3, h4 = DOM.h4, input = DOM.input, span = DOM.span;
 
   JSONUp = React.createClass({
     render: function() {
@@ -78,8 +78,6 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
       }, div({
         id: 'header'
       }, h1({}, 'JSON ➔ Up?')), div({
-        id: 'postbox'
-      }, PostBox()), div({
         id: 'demobox'
       }, DemoBox()), div({
         id: 'upboxes'
@@ -92,26 +90,94 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
   PostBox = React.createClass({
     exampleJSON: '[ {"name":"server1","value":300,"status":"UP"}, {"name":"server2","value":300,"status":"UP2"} ]',
     onSubmit: function(e) {
+      var http;
       e.preventDefault();
       console.log('submitted');
-      return console.log(e.target);
+      console.log(e.target);
+      console.log(this.exampleJSON);
+      http = new XMLHttpRequest();
+      http.open("POST", "/push/foobar", true);
+      return http.send(this.exampleJSON);
     },
     render: function() {
       return form({
         id: 'postform',
         onSubmit: this.onSubmit
-      }, div({}, "Demo: Post JSON to jsonup.com"), textarea({
-        id: 'textarea',
-        value: this.exampleJSON
-      }), div({}, input({
-        type: 'submit'
+      }, div({
+        className: 'demoform'
+      }, span({}, '[{ "name": "'), input({
+        id: 'demo-name',
+        defaultValue: 'server.redis'
+      }, span({}, '", "status": "')), input({
+        id: 'demo-status',
+        defaultValue: 'UP',
+        className: 'sm'
+      }, span({}, '", "value": ')), input({
+        id: 'demo-value',
+        defaultValue: 200,
+        className: 'sm'
+      }, span({}, '}]'))), div({
+        className: 'submit-div'
+      }, input({
+        type: 'submit',
+        className: 'submitbutton',
+        value: 'POST to jsonup.com/push/$userid'
       })));
     }
   });
 
   DemoBox = React.createClass({
+    getInitialState: function() {
+      return {
+        selected: 'menu-livedemo'
+      };
+    },
+    handleClick: function(e) {
+      e.preventDefault();
+      this.state.selected = e.target.id;
+      return render();
+    },
+    classNameFor: function(menuname) {
+      if (this.state.selected === "menu-" + menuname) {
+        return "selected";
+      } else {
+        return "";
+      }
+    },
     render: function() {
-      return ul({}, li({}, div({}, 'Go'), div({}, 'Todo: go example')), li({}, div({}, 'Ruby'), div({}, 'Todo: Ruby example')), li({}, div({}, 'Javascript'), div({}, 'Todo Javascript example')));
+      return div({
+        id: 'menu-wrap'
+      }, ul({
+        id: 'menu'
+      }, li({}, a({
+        href: '#',
+        id: 'menu-livedemo',
+        onClick: this.handleClick,
+        className: this.classNameFor('livedemo')
+      }, 'Live Demo')), li({}, a({
+        href: '#',
+        id: 'menu-ruby',
+        onClick: this.handleClick,
+        className: this.classNameFor('ruby')
+      }, 'Ruby')), li({}, a({
+        href: '#',
+        id: 'menu-go',
+        onClick: this.handleClick,
+        className: this.classNameFor('go')
+      }, 'Go')), li({}, a({
+        href: '#',
+        id: 'menu-javascript',
+        onClick: this.handleClick,
+        className: this.classNameFor('javascript')
+      }, 'Javascript'))), this.state.selected === 'menu-livedemo' ? div({
+        className: 'menu-content'
+      }, PostBox()) : void 0, this.state.selected === 'menu-go' ? div({
+        className: 'menu-content'
+      }, 'Todo: go example') : void 0, this.state.selected === 'menu-ruby' ? div({
+        className: 'menu-content'
+      }, 'Todo: Ruby example') : void 0, this.state.selected === 'menu-javascript' ? div({
+        className: 'menu-content'
+      }, 'Todo Javascript example') : void 0);
     }
   });
 
@@ -135,18 +201,17 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
   UpBox = React.createClass({
     render: function() {
-      console.log(this.props);
       return div({
         className: 'upbox-row'
       }, span({
-        "class": 'upbox-name'
-      }, this.props.name, span({
-        "class": 'upbox-status'
-      }, this.props.status, span({
-        "class": 'sparkline'
-      }, this.props.sparkline, label({}, input({
+        className: 'upbox-name'
+      }, this.props.name), span({
+        className: 'upbox-status'
+      }, this.props.status), Sparkline({
+        sparkline: this.props.sparkline
+      }), label({}, input({
         type: 'checkbox'
-      }), "Monitor")))), select({
+      }), "Monitor"), select({
         name: 'upbox'
       }, option({}, "Dead Man Switch", option({
         value: '1'
@@ -155,6 +220,17 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
       }, "5 Minute"), option({
         value: '60'
       }, "1 Hour")));
+    }
+  });
+
+  Sparkline = React.createClass({
+    render: function() {
+      console.log(this.props);
+      if (this.props.sparkline && this.props.sparkline.length > 0) {
+        return img({
+          src: "http://chart.apis.google.com/chart?cht=lc" + ("&chs=100x30&chd=t:" + this.props.sparkline + "&chco=666666") + "&chls=1,1,0" + "&chxt=r,x,y" + "&chxs=0,990000,11,0,_|1,990000,1,0,_|2,990000,1,0,_" + "&chxl=0:||1:||2:||"
+        });
+      }
     }
   });
 

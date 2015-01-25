@@ -11,7 +11,7 @@ DOM = (->
   object
 )()
 
-{div, ul, li, label, select, option, p, a, img, textarea, table, tbody, thead, th, tr, td, form, h1, input, span} = DOM
+{div, embed, ul, svg, li, label, select, option, p, a, img, textarea, table, tbody, thead, th, tr, td, form, h1, h2, h3, h4, input, span} = DOM
 # End Boilerplate
 
 JSONUp = React.createClass
@@ -19,7 +19,6 @@ JSONUp = React.createClass
     div {id: 'wrap'},
       div {id: 'header'},
         h1 {}, 'JSON ➔ Up?'
-      div {id: 'postbox'}, PostBox() # Box that demos a POST request
       div {id: 'demobox'}, DemoBox() # Box that shows how to post in ruby, curl etc
       div {id: 'upboxes'}, UpBoxes(ups: @props.ups) # the status and sparklines
 
@@ -34,26 +33,57 @@ PostBox = React.createClass
     e.preventDefault()
     console.log 'submitted'
     console.log(e.target)
+    console.log(@exampleJSON)
+    http = new XMLHttpRequest()
+    http.open("POST", "/push/foobar", true);
+    http.send(@exampleJSON)
 
   render: ->
     form {id: 'postform', onSubmit: @onSubmit},
-      div {}, "Demo: Post JSON to jsonup.com"
-      textarea {id: 'textarea', value: @exampleJSON}
-      div {},
-        input {type: 'submit'}
+      div {className: 'demoform'},
+        span {}, '[{ "name": "'
+        input {id: 'demo-name', defaultValue: 'server.redis'},
+        span {}, '", "status": "'
+        input {id: 'demo-status', defaultValue: 'UP', className: 'sm'},
+        span {}, '", "value": '
+        input {id: 'demo-value', defaultValue: 200, className: 'sm'},
+        span {}, '}]'
+
+      div {className: 'submit-div'},
+        input {type: 'submit', className: 'submitbutton', value: 'POST to jsonup.com/push/$userid'}
 
 DemoBox = React.createClass
+
+  getInitialState: ->
+    {selected: 'menu-livedemo'}
+
+  handleClick: (e) ->
+    e.preventDefault()
+    @state.selected = e.target.id
+    render()
+
+  classNameFor: (menuname) ->
+    if @state.selected == "menu-" + menuname
+      "selected"
+    else
+      ""
+
   render: ->
-    ul {},
-      li {},
-        div {}, 'Go'
-        div {}, 'Todo: go example'
-      li {},
-        div {}, 'Ruby'
-        div {}, 'Todo: Ruby example'
-      li {},
-        div {}, 'Javascript'
-        div {}, 'Todo Javascript example'
+    div {id: 'menu-wrap'},
+      ul {id: 'menu'},
+        li {},
+          a {href: '#', id: 'menu-livedemo', onClick: @handleClick, className: @classNameFor('livedemo')}, 'Live Demo'
+        li {},
+          a {href: '#', id: 'menu-ruby', onClick: @handleClick, className: @classNameFor('ruby')}, 'Ruby'
+        li {},
+          a {href: '#', id: 'menu-go', onClick: @handleClick, className: @classNameFor('go')}, 'Go'
+        li {},
+          a {href: '#', id: 'menu-javascript', onClick: @handleClick, className: @classNameFor('javascript')}, 'Javascript'
+
+      div {className: 'menu-content'}, PostBox() if @state.selected == 'menu-livedemo'
+      div {className: 'menu-content'}, 'Todo: go example' if @state.selected == 'menu-go'
+      div {className: 'menu-content'}, 'Todo: Ruby example' if @state.selected == 'menu-ruby'
+      div {className: 'menu-content'}, 'Todo Javascript example'  if @state.selected == 'menu-javascript'
 
 UpBoxes = React.createClass
   render: ->
@@ -64,9 +94,9 @@ UpBoxes = React.createClass
 UpBox = React.createClass
   render: ->
     div {className: 'upbox-row'},
-      span {class: 'upbox-name'}, @props.name,
-      span {class: 'upbox-status'}, @props.status,
-      span {class: 'sparkline'}, @props.sparkline,
+      span {className: 'upbox-name'}, @props.name
+      span {className: 'upbox-status'}, @props.status
+      Sparkline({sparkline: @props.sparkline})
       label {},
         input {type: 'checkbox'}
         "Monitor"
@@ -76,6 +106,16 @@ UpBox = React.createClass
         option {value: '5'}, "5 Minute"
         option {value: '60'}, "1 Hour"
 
+Sparkline = React.createClass
+  render: ->
+    console.log @props
+    if @props.sparkline && @props.sparkline.length > 0
+      img {src: "http://chart.apis.google.com/chart?cht=lc" +
+        "&chs=100x30&chd=t:#{@props.sparkline}&chco=666666" +
+        "&chls=1,1,0" +
+        "&chxt=r,x,y" +
+        "&chxs=0,990000,11,0,_|1,990000,1,0,_|2,990000,1,0,_" +
+        "&chxl=0:||1:||2:||" }
 
 class JSONUpCollection
   constructor: () ->
