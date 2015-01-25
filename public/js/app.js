@@ -317,7 +317,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
   collection = new JSONUpCollection;
 
-  sockUrl = "ws://127.0.0.1:11112/" + UserID;
+  sockUrl = "ws://jsonup.com/" + UserID;
 
   handleMessage = function(msg) {
     var d;
