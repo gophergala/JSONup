@@ -88,16 +88,40 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
   });
 
   PostBox = React.createClass({
-    exampleJSON: '[ {"name":"server1","value":300,"status":"UP"}, {"name":"server2","value":300,"status":"UP2"} ]',
+    getInitialState: function() {
+      return {
+        demoName: 'server1.redis',
+        demoStatus: 'UP',
+        demoValue: "25"
+      };
+    },
     onSubmit: function(e) {
       var http;
       e.preventDefault();
-      console.log('submitted');
-      console.log(e.target);
-      console.log(this.exampleJSON);
       http = new XMLHttpRequest();
       http.open("POST", "/push/foobar", true);
-      return http.send(this.exampleJSON);
+      return http.send(JSON.stringify([
+        {
+          name: this.state.demoName,
+          status: this.state.demoStatus,
+          value: this.state.demoValue
+        }
+      ]));
+    },
+    setName: function(e) {
+      return this.setState({
+        demoName: e.target.value
+      });
+    },
+    setStatus: function(e) {
+      return this.setState({
+        demoStatus: e.target.value
+      });
+    },
+    setValue: function(e) {
+      return this.setState({
+        demoValue: e.target.value
+      });
     },
     render: function() {
       return form({
@@ -106,16 +130,16 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
       }, div({
         className: 'demoform'
       }, span({}, '[{ "name": "'), input({
-        id: 'demo-name',
-        defaultValue: 'server.redis'
+        value: this.state.demoName,
+        onChange: this.setName
       }, span({}, '", "status": "')), input({
-        id: 'demo-status',
-        defaultValue: 'UP',
-        className: 'sm'
+        value: this.state.demoStatus,
+        className: 'sm',
+        onChange: this.setStatus
       }, span({}, '", "value": ')), input({
-        id: 'demo-value',
-        defaultValue: 200,
-        className: 'sm'
+        value: this.state.demoValue,
+        className: 'sm',
+        onChange: this.setValue
       }, span({}, '}]'))), div({
         className: 'submit-div'
       }, input({
@@ -225,7 +249,6 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
   Sparkline = React.createClass({
     render: function() {
-      console.log(this.props);
       if (this.props.sparkline && this.props.sparkline.length > 0) {
         return img({
           src: "http://chart.apis.google.com/chart?cht=lc" + ("&chs=100x30&chd=t:" + this.props.sparkline + "&chco=666666") + "&chls=1,1,0" + "&chxt=r,x,y" + "&chxs=0,990000,11,0,_|1,990000,1,0,_|2,990000,1,0,_" + "&chxl=0:||1:||2:||"

@@ -36,7 +36,7 @@ type wsConn struct {
 type JSONUp struct {
 	Name   string `json:"name"`
 	Status string `json:"status"`
-	Value  uint   `json:"value"`
+	Value  string `json:"value"`
 }
 
 // jsonUpRecord is internal

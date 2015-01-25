@@ -24,29 +24,38 @@ JSONUp = React.createClass
 
 # This will be the box that demos the post functionality
 PostBox = React.createClass
-  exampleJSON: '[
-      {"name":"server1","value":300,"status":"UP"},
-      {"name":"server2","value":300,"status":"UP2"}
-    ]'
+  getInitialState: ->
+    {
+      demoName: 'server1.redis',
+      demoStatus: 'UP',
+      demoValue: "25"
+    }
 
   onSubmit: (e) ->
     e.preventDefault()
-    console.log 'submitted'
-    console.log(e.target)
-    console.log(@exampleJSON)
     http = new XMLHttpRequest()
     http.open("POST", "/push/foobar", true);
-    http.send(@exampleJSON)
+    http.send(JSON.stringify([{
+      name: @state.demoName,
+      status: @state.demoStatus,
+      value: @state.demoValue
+    }]))
+
+  setName: (e) -> @setState({demoName: e.target.value})
+
+  setStatus: (e) -> @setState({demoStatus: e.target.value})
+
+  setValue: (e) -> @setState({demoValue: e.target.value})
 
   render: ->
     form {id: 'postform', onSubmit: @onSubmit},
       div {className: 'demoform'},
         span {}, '[{ "name": "'
-        input {id: 'demo-name', defaultValue: 'server.redis'},
+        input {value: @state.demoName, onChange: @setName},
         span {}, '", "status": "'
-        input {id: 'demo-status', defaultValue: 'UP', className: 'sm'},
+        input {value: @state.demoStatus, className: 'sm', onChange: @setStatus},
         span {}, '", "value": '
-        input {id: 'demo-value', defaultValue: 200, className: 'sm'},
+        input {value: @state.demoValue, className: 'sm', onChange: @setValue},
         span {}, '}]'
 
       div {className: 'submit-div'},
@@ -108,7 +117,7 @@ UpBox = React.createClass
 
 Sparkline = React.createClass
   render: ->
-    console.log @props
+    #console.log @props
     if @props.sparkline && @props.sparkline.length > 0
       img {src: "http://chart.apis.google.com/chart?cht=lc" +
         "&chs=100x30&chd=t:#{@props.sparkline}&chco=666666" +
