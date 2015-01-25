@@ -44,7 +44,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
 }).call(this);
 (function() {
-  var DOM, DemoBox, EnterPhoneForm, JSONUp, JSONUpCollection, PhoneForm, PostBox, Sparkline, UpBox, UpBoxes, UserID, VerifyPhoneForm, a, build_tag, collection, div, embed, form, h1, h2, h3, h4, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, svg, table, tbody, td, textarea, th, thead, tr, ul,
+  var DOM, DemoBox, EnterPhoneForm, JSONUp, JSONUpCollection, PhoneForm, PostBox, Sparkline, UpBox, UpBoxes, UserID, VerifyPhoneForm, a, br, build_tag, collection, div, embed, form, h1, h2, h3, h4, handleMessage, img, input, label, li, option, p, render, select, sockUrl, span, svg, table, tbody, td, textarea, th, thead, tr, ul,
     __slice = [].slice;
 
   build_tag = function(tag) {
@@ -69,7 +69,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
     return object;
   })();
 
-  div = DOM.div, embed = DOM.embed, ul = DOM.ul, svg = DOM.svg, li = DOM.li, label = DOM.label, select = DOM.select, option = DOM.option, p = DOM.p, a = DOM.a, img = DOM.img, textarea = DOM.textarea, table = DOM.table, tbody = DOM.tbody, thead = DOM.thead, th = DOM.th, tr = DOM.tr, td = DOM.td, form = DOM.form, h1 = DOM.h1, h2 = DOM.h2, h3 = DOM.h3, h4 = DOM.h4, input = DOM.input, span = DOM.span;
+  div = DOM.div, embed = DOM.embed, ul = DOM.ul, svg = DOM.svg, li = DOM.li, label = DOM.label, select = DOM.select, option = DOM.option, br = DOM.br, p = DOM.p, a = DOM.a, img = DOM.img, textarea = DOM.textarea, table = DOM.table, tbody = DOM.tbody, thead = DOM.thead, th = DOM.th, tr = DOM.tr, td = DOM.td, form = DOM.form, h1 = DOM.h1, h2 = DOM.h2, h3 = DOM.h3, h4 = DOM.h4, input = DOM.input, span = DOM.span;
 
   JSONUp = React.createClass({
     render: function() {
@@ -129,18 +129,18 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         onSubmit: this.onSubmit
       }, div({
         className: 'demoform'
-      }, span({}, '[{"name":"'), input({
+      }, span({}, '[{'), br({}), span({}, '"name":"'), input({
         value: this.state.demoName,
         onChange: this.setName
-      }, span({}, '", "status":"')), input({
+      }), span({}, '",'), br({}), span({}, '"status":"'), input({
         value: this.state.demoStatus,
         className: 'sm',
         onChange: this.setStatus
-      }, span({}, '", "value":"')), input({
+      }), span({}, '",'), br({}), span({}, '"value":"'), input({
         value: this.state.demoValue,
         className: 'sm',
         onChange: this.setValue
-      }, span({}, '"}]'))), div({
+      }), span({}, '"'), br({}), span({}, '}]')), div({
         className: 'submit-div'
       }, div({}, "Your user id is " + UserID), input({
         type: 'submit',
@@ -243,17 +243,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         className: 'upbox-status'
       }, this.props.status), Sparkline({
         sparkline: this.props.sparkline
-      }), label({}, input({
-        type: 'checkbox'
-      }), "Monitor"), select({
-        name: 'upbox'
-      }, option({}, "KeepAlive Alert", option({
-        value: '1'
-      }, "1 Minute")), option({
-        value: '5'
-      }, "5 Minute"), option({
-        value: '60'
-      }, "1 Hour"))), div({
+      })), div({
         className: 'upbox-name'
       }, this.props.name));
     }

@@ -11,7 +11,7 @@ DOM = (->
   object
 )()
 
-{div, embed, ul, svg, li, label, select, option, p, a, img, textarea, table, tbody, thead, th, tr, td, form, h1, h2, h3, h4, input, span} = DOM
+{div, embed, ul, svg, li, label, select, option, br, p, a, img, textarea, table, tbody, thead, th, tr, td, form, h1, h2, h3, h4, input, span} = DOM
 # End Boilerplate
 
 JSONUp = React.createClass
@@ -51,13 +51,21 @@ PostBox = React.createClass
   render: ->
     form {id: 'postform', onSubmit: @onSubmit},
       div {className: 'demoform'},
-        span {}, '[{"name":"'
-        input {value: @state.demoName, onChange: @setName},
-        span {}, '", "status":"'
-        input {value: @state.demoStatus, className: 'sm', onChange: @setStatus},
-        span {}, '", "value":"'
-        input {value: @state.demoValue, className: 'sm', onChange: @setValue},
-        span {}, '"}]'
+        span {}, '[{'
+        br {}
+        span {}, '"name":"'
+        input {value: @state.demoName, onChange: @setName}
+        span {}, '",'
+        br {}
+        span {}, '"status":"'
+        input {value: @state.demoStatus, className: 'sm', onChange: @setStatus}
+        span {}, '",'
+        br {}
+        span {}, '"value":"'
+        input {value: @state.demoValue, className: 'sm', onChange: @setValue}
+        span {}, '"'
+        br {}
+        span {}, '}]'
 
       div {className: 'submit-div'},
         div {}, "Your user id is #{UserID}"
@@ -116,14 +124,14 @@ UpBox = React.createClass
       div {className: 'upbox-right'},
         span {className: 'upbox-status'}, @props.status
         Sparkline({sparkline: @props.sparkline})
-        label {},
-          input {type: 'checkbox'}
-          "Monitor"
-        select {name: 'upbox'},
-          option {}, "KeepAlive Alert",
-          option {value: '1'}, "1 Minute"
-          option {value: '5'}, "5 Minute"
-          option {value: '60'}, "1 Hour"
+        # label {},
+        #   input {type: 'checkbox'}
+        #   "Monitor"
+        # select {name: 'upbox'},
+        #   option {}, "KeepAlive Alert",
+        #   option {value: '1'}, "1 Minute"
+        #   option {value: '5'}, "5 Minute"
+        #   option {value: '60'}, "1 Hour"
       div {className: 'upbox-name'}, @props.name
 
 
