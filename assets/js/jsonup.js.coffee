@@ -168,7 +168,7 @@ EnterPhoneForm = React.createClass
 
 VerifyPhoneForm = React.createClass
   handleSubmit: (e) ->
-    console.log(e)
+    #console.log(e)
     e.preventDefault()
 
   render: ->
@@ -207,7 +207,7 @@ sockUrl = "ws://jsonup.com:11112/#{UserID}"
 
 handleMessage = (msg) ->
   d = JSON.parse(msg.data)
-  console.log d
+  #console.log d
   collection.add(d)
   render()
 

@@ -266,7 +266,6 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
 
   VerifyPhoneForm = React.createClass({
     handleSubmit: function(e) {
-      console.log(e);
       return e.preventDefault();
     },
     render: function() {
@@ -322,7 +321,6 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
   handleMessage = function(msg) {
     var d;
     d = JSON.parse(msg.data);
-    console.log(d);
     collection.add(d);
     return render();
   };
