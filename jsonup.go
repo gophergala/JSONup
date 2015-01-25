@@ -40,9 +40,21 @@ type JSONUp struct {
 
 // jsonUpRecord is internal
 type jsonUpRecord struct {
-	UserID string `json:"-"` // omit
+	User UpUser `json:"-"` // omit
 	JSONUp
 	ValueHistory []string `json:"sparkline"`
+}
+
+type UpUser struct {
+	ID            string
+	PhoneAreaCode string
+	PhoneNumber   string
+	VerifyCode    string
+	Verified      bool
+}
+
+func (r jsonUpRecord) ID() string {
+	return r.User.ID + ":" + r.Name
 }
 
 func redisSubscribeJSON(userID string) chan string {
@@ -101,6 +113,75 @@ func startWsServer(port string) {
 	}
 }
 
+func loadUser(userID string) (*UpUser, error) {
+	conn := pool.Get()
+	defer conn.Close()
+
+	userjson, err := redis.String(conn.Do("GET", "user:"+userID))
+	if err != nil {
+		log.Printf("Redis GET Error %s", err)
+		return nil, err
+	} else {
+		var upUser UpUser
+		err = json.Unmarshal([]byte(userjson), &upUser)
+		if err != nil {
+			log.Printf("Marshal Error Error %s", err)
+			panic(err)
+		}
+		return &upUser, nil
+	}
+}
+
+func (u *UpUser) SaveUser() {
+	userJson, err := json.Marshal(u)
+
+	if err != nil {
+		log.Printf("Marshal Error Error %s", err)
+		panic(err)
+	}
+
+	conn := pool.Get()
+	defer conn.Close()
+	// TODO, maybe store the user as redis hash?
+	_, err = conn.Do("SETNX", "user:"+u.ID, userJson)
+	if err != nil {
+		log.Printf("Redis SET Error %s", err)
+		panic(err)
+	}
+}
+
+// func (u *UpUser) SendVerifyCode(ph_area, ph_num, string) string {
+// 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+// 	rnum := string(r.Int31())[:5]
+//
+// 	conn := pool.Get()
+// 	defer conn.Close()
+// 	return rnum
+// }
+
+func saveUserEndpoint(w http.ResponseWriter, req *http.Request) {
+	var user UpUser
+
+	decoder := json.NewDecoder(req.Body)
+	err := decoder.Decode(&user)
+
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+
+	idx := strings.LastIndex(req.URL.Path, "/")
+	userID := req.URL.Path[idx:]
+
+	if userID == user.ID {
+		// save user
+		user.SaveUser()
+	} else {
+		w.WriteHeader(422)
+	}
+}
+
 func pushEndpoint(w http.ResponseWriter, req *http.Request) {
 	var jsonCollection []JSONUp
 
@@ -116,10 +197,14 @@ func pushEndpoint(w http.ResponseWriter, req *http.Request) {
 	idx := strings.LastIndex(req.URL.Path, "/")
 	userID := req.URL.Path[idx:]
 
-	// TODO check userid
+	user, err := loadUser(userID)
+	if err != nil {
+		user = &UpUser{ID: userID}
+		user.SaveUser()
+	}
 
 	for _, jsonRecord := range jsonCollection {
-		r := jsonUpRecord{JSONUp: jsonRecord, UserID: userID}
+		r := jsonUpRecord{JSONUp: jsonRecord, User: *user}
 		go pushToRedis(&r)
 	}
 
@@ -132,7 +217,7 @@ func pushToRedis(up *jsonUpRecord) (err error) {
 	conn := pool.Get()
 	defer conn.Close()
 
-	key := up.UserID + ":" + ju.Name
+	key := up.ID() + ":" + ju.Name
 
 	_, err = conn.Do("SETEX", key+"status", 60, ju.Status)
 	if err != nil {
@@ -160,9 +245,10 @@ func pushToRedis(up *jsonUpRecord) (err error) {
 
 	log.Printf("%s", values)
 	up.ValueHistory = values
+
 	// Publish Web Event.
 	data, _ := json.Marshal(up)
-	_, err = conn.Do("PUBLISH", up.UserID, data)
+	_, err = conn.Do("PUBLISH", up.User.ID, data)
 	if err != nil {
 		log.Printf("Redis Push Error %s", err)
 		return
@@ -180,6 +266,9 @@ func main() {
 
 	// Push endpoint
 	router.HandleFunc("/push/{userId}", pushEndpoint).Methods("POST")
+
+	// Save User
+	router.HandleFunc("/saveUser/{userId}", saveUserEndpoint).Methods("POST")
 
 	// Static public files
 	publicFiles := http.FileServer(http.Dir("public"))

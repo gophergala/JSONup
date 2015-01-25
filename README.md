@@ -39,3 +39,28 @@ uses `Redis` for data persistance and messaging,
 
 To run:
 `foreman start`
+
+# Work in progress
+
+[screenshot](screenshot.png)
+
+everything
+
+# Members
+
+Currently only me ( @eadz ).
+
+If you want to join, submit a PR,
+first 3 people to have one merged will be members!
+
+# can use help with the following:
+ * Go best practices ( I'm a newbie )
+ * split up app.
+ * still have to connect to twillio to verify SMS
+ * still have to monitor for "Down" and send sms.
+ * ratelimit SMS
+ * "signup" process ( though this can be automatic really)
+ * css
+ * Usage examples
+ * sparkline drawing in JS
+ *
