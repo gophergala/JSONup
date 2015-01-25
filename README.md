@@ -46,6 +46,7 @@ To run:
 
 everything
 
+
 # Members
 
 Currently only me ( @eadz ).
@@ -63,4 +64,6 @@ first 3 people to have one merged will be members!
  * css
  * Usage examples
  * sparkline drawing in JS
- *
+
+
+ I'll be online sporadically but regularly until the end of the comp!
