@@ -72,37 +72,9 @@ PostBox = React.createClass
         input {type: 'submit', className: 'submitbutton', value: "POST to https://api.jsonup.com/push/#{UserID}"}
 
 DemoBox = React.createClass
-
-  getInitialState: ->
-    {selected: 'menu-livedemo'}
-
-  handleClick: (e) ->
-    e.preventDefault()
-    @state.selected = e.target.id
-    render()
-
-  classNameFor: (menuname) ->
-    if @state.selected == "menu-" + menuname
-      "selected"
-    else
-      ""
-
   render: ->
     div {id: 'menu-wrap'},
-      ul {id: 'menu'},
-        li {},
-          a {href: '#', id: 'menu-livedemo', onClick: @handleClick, className: @classNameFor('livedemo')}, 'Live Demo'
-        li {},
-          a {href: '#', id: 'menu-ruby', onClick: @handleClick, className: @classNameFor('ruby')}, 'Ruby'
-        li {},
-          a {href: '#', id: 'menu-go', onClick: @handleClick, className: @classNameFor('go')}, 'Go'
-        li {},
-          a {href: '#', id: 'menu-javascript', onClick: @handleClick, className: @classNameFor('javascript')}, 'Javascript'
-
-      div {className: 'menu-content'}, PostBox() if @state.selected == 'menu-livedemo'
-      div {className: 'menu-content'}, 'Todo: go example' if @state.selected == 'menu-go'
-      div {className: 'menu-content'}, 'Todo: Ruby example' if @state.selected == 'menu-ruby'
-      div {className: 'menu-content'}, 'Todo Javascript example'  if @state.selected == 'menu-javascript'
+      div {className: 'menu-content'}, PostBox()
 
 UpBoxes = React.createClass
   render: ->

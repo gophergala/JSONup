@@ -151,57 +151,12 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
   });
 
   DemoBox = React.createClass({
-    getInitialState: function() {
-      return {
-        selected: 'menu-livedemo'
-      };
-    },
-    handleClick: function(e) {
-      e.preventDefault();
-      this.state.selected = e.target.id;
-      return render();
-    },
-    classNameFor: function(menuname) {
-      if (this.state.selected === "menu-" + menuname) {
-        return "selected";
-      } else {
-        return "";
-      }
-    },
     render: function() {
       return div({
         id: 'menu-wrap'
-      }, ul({
-        id: 'menu'
-      }, li({}, a({
-        href: '#',
-        id: 'menu-livedemo',
-        onClick: this.handleClick,
-        className: this.classNameFor('livedemo')
-      }, 'Live Demo')), li({}, a({
-        href: '#',
-        id: 'menu-ruby',
-        onClick: this.handleClick,
-        className: this.classNameFor('ruby')
-      }, 'Ruby')), li({}, a({
-        href: '#',
-        id: 'menu-go',
-        onClick: this.handleClick,
-        className: this.classNameFor('go')
-      }, 'Go')), li({}, a({
-        href: '#',
-        id: 'menu-javascript',
-        onClick: this.handleClick,
-        className: this.classNameFor('javascript')
-      }, 'Javascript'))), this.state.selected === 'menu-livedemo' ? div({
+      }, div({
         className: 'menu-content'
-      }, PostBox()) : void 0, this.state.selected === 'menu-go' ? div({
-        className: 'menu-content'
-      }, 'Todo: go example') : void 0, this.state.selected === 'menu-ruby' ? div({
-        className: 'menu-content'
-      }, 'Todo: Ruby example') : void 0, this.state.selected === 'menu-javascript' ? div({
-        className: 'menu-content'
-      }, 'Todo Javascript example') : void 0);
+      }, PostBox()));
     }
   });
 
