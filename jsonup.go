@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	listenAddr    = flag.String("listenAddr", ":11111", "Web server listen address")
+	listenAddr    = flag.String("listenAddr", ":80", "Web server listen address")
 	wsListenAddr  = flag.String("wsListenAddr", ":11112", "Websocket server listen address")
 	redisProtocol = flag.String("redisProtocol", "tcp", "Redis server protocol")
 	redisAddress  = flag.String("redisAddress", "localhost:6379", "Redis server address")
