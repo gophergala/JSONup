@@ -20,12 +20,12 @@ with sparklines of the posted values.
   {
     "name": "email.queue-count",
     "status": "OK",
-    "value": 20
+    "value": "20"
   },
   {
     "name": "servers.3.free-disk", # Domain label format
     "status": "OK", # OK,UP = GOOD. DOWN,FAIL = BAD.
-    "value": 300,
+    "value": "100", # 0..100
     "value_label": "megabytes" # OPTIONAL, TODO
   },
 ]
@@ -52,6 +52,7 @@ To run:
  * ratelimit SMS
  * "signup" process ( though this can be automatic really)
  * Usage examples
+ * fix max 100 value issue
 
 
 # Communication
