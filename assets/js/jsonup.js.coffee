@@ -80,7 +80,7 @@ PostBox = React.createClass
         span {}, '}]'
 
       div {className: 'submit-div'},
-        input {type: 'submit', className: 'submitbutton', value: "Show Me"}
+        input {type: 'submit', className: 'submitbutton', value: "POST JSON!"}
 
 DemoBox = React.createClass
   render: ->
