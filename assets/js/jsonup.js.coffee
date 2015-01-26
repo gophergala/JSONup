@@ -61,7 +61,7 @@ PostBox = React.createClass
     form {id: 'postform', onSubmit: @onSubmit},
       div {},
         div {}, "curl --data '[{\"name\":\"server1.ram\",\"value\":\"50\",\"status\":\"UP\"}]'  " +
-              " http://jsonup.com/push/#{UserID}"
+              " https://jsonup.com/push/#{UserID}"
       div {className: 'demoform'},
         span {}, '[{'
         br {}
