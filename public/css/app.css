@@ -159,3 +159,11 @@ div#phone-form {
   border-top: 1px solid #ccc;
   margin-top: 30px;
 }
+
+/* contact */
+
+div#contact {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 12px;
+}

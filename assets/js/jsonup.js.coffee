@@ -22,6 +22,17 @@ JSONUp = React.createClass
       div {id: 'demobox'}, DemoBox() # Box that shows how to post in ruby, curl etc
       div {id: 'upboxes'}, UpBoxes(ups: @props.ups) # the status and sparklines
       PhoneForm() if @props.ups && @props.ups.length > 0
+      div {id: 'contact'},
+        p {},
+          span {}, "Gopher Gala entry by @eadz "
+          a {href: 'https://github.com/eadz'}, "github"
+          span {}, " | "
+          a {href: 'https://twitter.com/eadz'}, "twitter"
+
+        p {},
+          span {}, "Follow "
+          a {href: 'https://twitter.com/JSON_UP'}, "@JSON_Up"
+          span {}, " for updates!"
 
 # This will be the box that demos the post functionality
 PostBox = React.createClass

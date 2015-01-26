@@ -83,7 +83,15 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         id: 'upboxes'
       }, UpBoxes({
         ups: this.props.ups
-      })), this.props.ups && this.props.ups.length > 0 ? PhoneForm() : void 0);
+      })), this.props.ups && this.props.ups.length > 0 ? PhoneForm() : void 0, div({
+        id: 'contact'
+      }, p({}, span({}, "Gopher Gala entry by @eadz "), a({
+        href: 'https://github.com/eadz'
+      }, "github"), span({}, " | "), a({
+        href: 'https://twitter.com/eadz'
+      }, "twitter")), p({}, span({}, "Follow "), a({
+        href: 'https://twitter.com/JSON_UP'
+      }, "@JSON_Up"), span({}, " for updates!"))));
     }
   });
 
