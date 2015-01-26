@@ -19,6 +19,10 @@ JSONUp = React.createClass
     div {id: 'wrap'},
       div {id: 'header'},
         h1 {}, 'JSON ➔ Up?'
+        p {},
+          span {}, "Your user id is #{UserID}."
+          br {}
+          span {}, "To view your statuses, bookmark this URL: https://jsonup.com/##{UserID}"
       div {id: 'demobox'}, DemoBox() # Box that shows how to post in ruby, curl etc
       div {id: 'upboxes'}, UpBoxes(ups: @props.ups) # the status and sparklines
       PhoneForm() if @props.ups && @props.ups.length > 0
@@ -71,7 +75,8 @@ PostBox = React.createClass
   render: ->
     form {id: 'postform', onSubmit: @onSubmit},
       div {},
-        div {}, "curl --data '[{\"name\":\"server1.ram\",\"value\":\"50\",\"status\":\"UP\"}]'  " +
+        p {}, "Post Data:"
+        div {className: 'curl'}, "curl --data '[{\"name\":\"server1.ram\",\"value\":\"50\",\"status\":\"UP\"}]'  " +
               " https://jsonup.com/push/#{UserID}"
       div {className: 'demoform'},
         span {}, '[{'

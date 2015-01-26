@@ -77,7 +77,7 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
         id: 'wrap'
       }, div({
         id: 'header'
-      }, h1({}, 'JSON ➔ Up?')), div({
+      }, h1({}, 'JSON ➔ Up?'), p({}, span({}, "Your user id is " + UserID + "."), br({}), span({}, "To view your statuses, bookmark this URL: https://jsonup.com/#" + UserID))), div({
         id: 'demobox'
       }, DemoBox()), div({
         id: 'upboxes'
@@ -145,7 +145,9 @@ var n=e.firstChild;1===n.data.length?e.removeChild(n):n.deleteData(0,1)}else e.i
       return form({
         id: 'postform',
         onSubmit: this.onSubmit
-      }, div({}, div({}, "curl --data '[{\"name\":\"server1.ram\",\"value\":\"50\",\"status\":\"UP\"}]'  " + (" https://jsonup.com/push/" + UserID))), div({
+      }, div({}, p({}, "Post Data:"), div({
+        className: 'curl'
+      }, "curl --data '[{\"name\":\"server1.ram\",\"value\":\"50\",\"status\":\"UP\"}]'  " + (" https://jsonup.com/push/" + UserID))), div({
         className: 'demoform'
       }, span({}, '[{'), br({}), span({}, '"name":"'), input({
         value: this.state.demoName,

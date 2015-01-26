@@ -52,6 +52,12 @@ div#postbox {
   text-align: center;
 }
 
+div.curl {
+  font-family: "courier new";
+  font-size: 11px;
+  margin: 5px;
+}
+
 div.demoform {
   padding: 20px;
   background-color: #000;
