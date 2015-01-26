@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	listenAddr    = flag.String("listenAddr", ":80", "Web server listen address")
+	listenAddr    = flag.String("listenAddr", "127.0.0.1:11111", "Web server listen address")
 	wsListenAddr  = flag.String("wsListenAddr", ":11112", "Websocket server listen address")
 	redisProtocol = flag.String("redisProtocol", "tcp", "Redis server protocol")
 	redisAddress  = flag.String("redisAddress", "localhost:6379", "Redis server address")
@@ -114,7 +114,7 @@ func wsServer(ws *websocket.Conn) {
 
 func startWsServer(port string) {
 	log.Println("Websocket server Listening on " + port)
-	err := http.ListenAndServe(port, websocket.Handler(wsServer))
+	err := http.ListenAndServeTLS(port, "server.crt", "server.key", websocket.Handler(wsServer))
 	if err != nil {
 		panic(err)
 	}
